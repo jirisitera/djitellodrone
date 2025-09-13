@@ -57,8 +57,7 @@ class app(object):
             cv2.putText(frame, text, (5, 720 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             frame = np.rot90(frame)
             frame = np.flipud(frame)
-            surfaceFrame = pygame.surfarray.make_surface(frame)
-            self.screen.blit(surfaceFrame, (0, 0))
+            self.screen.blit(pygame.surfarray.make_surface(frame), (0, 0))
             pygame.display.update()
             time.sleep(1 / FPS)
             speed = 80
@@ -101,8 +100,10 @@ class app(object):
                     if event.button == 3:
                         Drone.takeoff()
                     if event.button == 6:
+                        img = frame_read.frame
+                        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                         imgName = "Droneshot_" + time.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
-                        if not cv2.imwrite(Path.home() / "Pictures" / imgName, frame): raise Exception("Could not write image!")
+                        if not cv2.imwrite(Path.home() / "Pictures" / imgName, img): raise Exception("Could not write image!")
             Drone.send_rc_control(lr, fb, ud, yv)
     def quit(self, status=0):
         pygame.quit()
