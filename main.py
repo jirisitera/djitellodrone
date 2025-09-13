@@ -102,8 +102,9 @@ class app(object):
                     if event.button == 3:
                         Drone.takeoff()
                     if event.button == 6:
-                        cv2.imwrite("./droneshots/Droneshot_" + time.strftime("%Y_%m_%d_%H_%M_%S") + ".png", frame_read.frame)
-                        print("Droneshot taken!")
+                        os.makedirs("./droneshots", exist_ok=True)
+                        path = "./droneshots/Droneshot_" + time.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
+                        if not cv2.imwrite(path, frame_read.frame): raise Exception("Could not write image")
             Drone.send_rc_control(lr, fb, ud, yv)
     def quit(self, status=0):
         pygame.quit()
