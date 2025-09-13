@@ -1,4 +1,5 @@
 from djitellopy import tello
+from pathlib import Path
 import cv2
 import pygame
 import numpy as np
@@ -56,8 +57,8 @@ class app(object):
             cv2.putText(frame, text, (5, 720 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             frame = np.rot90(frame)
             frame = np.flipud(frame)
-            frame = pygame.surfarray.make_surface(frame)
-            self.screen.blit(frame, (0, 0))
+            surfaceFrame = pygame.surfarray.make_surface(frame)
+            self.screen.blit(surfaceFrame, (0, 0))
             pygame.display.update()
             time.sleep(1 / FPS)
             speed = 80
@@ -95,16 +96,13 @@ class app(object):
                     self.joy[event.joy].button[event.button] = 1
                     if event.button == 0:
                         Drone.land()
-                    if event.button == 1:
-                        Drone.initiate_throw_takeoff()
                     if event.button == 2:
                         Drone.emergency()
                     if event.button == 3:
                         Drone.takeoff()
                     if event.button == 6:
-                        os.makedirs("./droneshots", exist_ok=True)
-                        path = "./droneshots/Droneshot_" + time.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
-                        if not cv2.imwrite(path, frame_read.frame): raise Exception("Could not write image")
+                        imgName = "Droneshot_" + time.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
+                        if not cv2.imwrite(Path.home() / "Pictures" / imgName, frame): raise Exception("Could not write image!")
             Drone.send_rc_control(lr, fb, ud, yv)
     def quit(self, status=0):
         pygame.quit()
