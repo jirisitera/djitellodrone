@@ -51,7 +51,6 @@ class app(object):
             frame_read = Drone.get_frame_read()
             if frame_read.stopped: break
             self.screen.fill([0, 0, 0])
-            frame = frame_read.frame
             text = "Battery: {}% | Max Temp: {}C".format(Drone.get_battery(), Drone.get_highest_temperature())
             cv2.putText(frame, text, (5, 720 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             frame = np.rot90(frame)
@@ -94,7 +93,7 @@ class app(object):
                     if event.button == 0:
                         Drone.land()
                     if event.button == 1:
-                        cv2.imwrite("screenshots/picture_" + str(int(time.time())) + ".png", frame_read.frame)
+                        cv2.imwrite("./droneshots/Droneshot_" + time.strftime("%Y_%m_%d-%H:%M:%S") + ".png", frame_read.frame)
                     if event.button == 2:
                         Drone.initiate_throw_takeoff()
                     if event.button == 3:
