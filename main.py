@@ -50,6 +50,7 @@ class app(object):
         while True:
             frame_read = Drone.get_frame_read()
             if frame_read.stopped: break
+            frame = frame_read.frame
             self.screen.fill([0, 0, 0])
             text = "Battery: {}% | Max Temp: {}C".format(Drone.get_battery(), Drone.get_highest_temperature())
             cv2.putText(frame, text, (5, 720 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
