@@ -60,10 +60,10 @@ class app(object):
             self.screen.blit(frame, (0, 0))
             pygame.display.update()
             time.sleep(1 / FPS)
-            speed = 80 
-            liftSpeed = 40
-            moveSpeed = 90
-            rotationSpeed = 100
+            speed = 80
+            liftSpeed = 60
+            moveSpeed = 100
+            rotationSpeed = 40
             for event in [pygame.event.wait()] + pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
@@ -73,10 +73,12 @@ class app(object):
                         lr = int(event.value * speed)
                     elif event.axis == 1:
                         fb = -int(event.value * moveSpeed)
-                    elif event.axis == 2:
-                        yv = int(event.value * rotationSpeed)
                     elif event.axis == 3:
                         ud = -int(event.value * liftSpeed)
+                    elif event.axis == 4:
+                        yv = -int((event.value + 1) * rotationSpeed)
+                    elif event.axis == 5:
+                        yv = int((event.value + 1) * rotationSpeed)
                 elif event.type == pygame.JOYHATMOTION:
                     self.joy[event.joy].hat[event.hat] = event.value
                     x = event.value[0]
@@ -94,11 +96,14 @@ class app(object):
                     if event.button == 0:
                         Drone.land()
                     if event.button == 1:
-                        cv2.imwrite("./droneshots/Droneshot_" + time.strftime("%Y_%m_%d-%H:%M:%S") + ".png", frame_read.frame)
-                    if event.button == 2:
                         Drone.initiate_throw_takeoff()
+                    if event.button == 2:
+                        Drone.emergency()
                     if event.button == 3:
                         Drone.takeoff()
+                    if event.button == 6:
+                        cv2.imwrite("./droneshots/Droneshot_" + time.strftime("%Y_%m_%d_%H_%M_%S") + ".png", frame_read.frame)
+                        print("Droneshot taken!")
             Drone.send_rc_control(lr, fb, ud, yv)
     def quit(self, status=0):
         pygame.quit()
