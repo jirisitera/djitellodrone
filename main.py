@@ -9,16 +9,9 @@ FPS = 60
 os.environ["SDL_VIDEO_ALLOW_SCREENSAVER"] = "1"
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 os.environ["SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR"] = "0"
-if __name__ == "__main__":
-    Drone = tello.Tello()
-    Drone.connect()
-    program = app()
-    program.init()
-    program.run()
 class joystick_handler(object):
     def __init__(self, id):
         self.id = id
-        self.name = self.joy.get_name()
         self.joy = pygame.joystick.Joystick(id)
         self.joy.init()
         # axis
@@ -40,7 +33,7 @@ class app(object):
     def init(self):
         pygame.init()
         pygame.display.set_caption("Wireless Drone Controller")
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((1080, 720))
         pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // FPS)
         pygame.event.set_blocked((pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN))
         self.joycount = pygame.joystick.get_count()
@@ -96,15 +89,23 @@ class app(object):
                         Drone.flip_right()
                     elif x == -1 & y == 0:
                         Drone.flip_left()
-
-
                 elif event.type == pygame.JOYBUTTONDOWN:
                     self.joy[event.joy].button[event.button] = 1
                     if event.button == 0:
                         Drone.land()
+                    if event.button == 1:
+                        cv2.imwrite("screenshots/picture_" + str(int(time.time())) + ".png", frame_read.frame)
+                    if event.button == 2:
+                        Drone.initiate_throw_takeoff()
                     if event.button == 3:
                         Drone.takeoff()
             Drone.send_rc_control(lr, fb, ud, yv)
     def quit(self, status=0):
         pygame.quit()
         sys.exit(status)
+if __name__ == "__main__":
+    Drone = tello.Tello()
+    Drone.connect()
+    program = app()
+    program.init()
+    program.run()
